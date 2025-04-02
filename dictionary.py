@@ -1,29 +1,49 @@
 class Dictionary:
 
     def __init__(self):
-        self.dizionario = {}
+        self._dizionario = {}
 
-    def addWord(self, parolaAliena, parolaTradotta):
-        self.dizionario[parolaAliena.lower()] = parolaTradotta
+    def __str__(self):
+         str=""
+         for (key, value) in self._dizionario.items():
+             str += f"{key} {value};\n"
+         return str
 
-    def translate(self, parolaAliena):
-        if parolaAliena.lower() in self.dizionario.keys():
-            return self.dizionario[parolaAliena.lower()]
+    def clear(self):
+        self._dizionario.clear()  #svotare il dizionario
 
-    def translateWordWildCard(self, parolaAliena):
-        for parola in self.dizionario.keys():
-            if parola==parolaAliena.lower():
-                return self.dizionario[parolaAliena]
-        print("La parola aliena non esiste o non è ancora stata tradotta! Riprovare")
-        return None
-        # attenzione, non va bene scrivere if: else: perchè vuol dire che se alla prima iterazione l'if
-        # non è verificato stampa subito l'else. perciò mettilo fuori dal ciclo di for
-
-    def printDictionary(self):
-        if len(self.dizionario) == 0:
-            print("Errore di stampa. Dizionario Vuoto!")
+#---------------------------------------------------------------------------------------------------------------
+    def addWord(self, wild, ita):
+        if wild.lower() in self._dizionario and ita.lower()==self._dizionario[wild.lower()]:
+            pass
         else:
-            for parolaAliena in self.dizionario.keys():
-                parolaTradotta = self.dizionario[parolaAliena]
-                print(f"{parolaAliena} - {parolaTradotta}")
-            #for parolaAliena, parolaTradotta in self.dizionario.items(): --> itera su tutti gli elementi, sia chiave che valore
+            if wild.lower() not in self._dizionario:
+                self._dizionario[ wild.lower() ] = []
+            self._dizionario[wild.lower()].append(ita.lower())
+
+# ---------------------------------------------------------------------------------------------------------------
+    def translate(self, wild):
+        #dal file translator.py capisco che ha wild come parametro
+        return self._dizionario.get(wild.lower(), "Parola non trovata")
+    """risposta=[]
+       for (alien,ita) in self._dizionario.items():
+            if parolaAliena.lower()==alien:
+                risposta.append(ita)
+            if risposta==[]
+                return "Parola non trovata"
+            return risposta """
+
+# ---------------------------------------------------------------------------------------------------------------
+    def translateWordWildCard(self, wild):
+        #dal file translator.py capisco che è il caso con "?"
+        risposta=[]
+        for alien in self._dizionario:
+            if len(wild)==len(alien) and (wild.split("?")[0].lower() in alien.lower() and wild.split("?")[1].lower() in alien.lower()) :
+                risposta.append(alien)                      #stampa prima la parola aliena senza "?"
+                risposta.append(self.translate(alien))      #stampa la traduzione attraverso il metodo precedente
+                return risposta
+
+        if risposta==[]:
+            risposta.append("Parola non trovata")
+        return risposta
+
